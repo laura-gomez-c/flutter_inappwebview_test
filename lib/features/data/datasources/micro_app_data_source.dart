@@ -12,12 +12,16 @@ abstract class MicroAppRemoteDataSource {
 }
 
 class MicroAppRemoteDataSourceImpl implements MicroAppRemoteDataSource {
+  final http.Client client;
+
+  MicroAppRemoteDataSourceImpl({@required this.client});
+
   @override
   Future<File> getZip(String fileZipName) => _downloadFile(fileZipName);
 
   Future<File> _downloadFile(String fileZipName) async {
     String _dir = (await getApplicationDocumentsDirectory()).path;
-    var response = await http.Client().get(Uri.parse(
+    var response = await client.get(Uri.parse(
         'https://github.com/laura-gomez-c/assets_flutter_test/blob/main/$fileZipName.zip?raw=true'));
 
     print('status code response:: ' + response.statusCode.toString());
