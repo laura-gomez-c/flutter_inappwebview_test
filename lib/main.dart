@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:flutter_test_app/features/presentation/pages/host_app_page.dart';
 import 'package:flutter_test_app/in_app_webiew_example.screen.dart';
 
 // import 'package:permission_handler/permission_handler.dart';
@@ -14,6 +15,20 @@ Future main() async {
 //  await Permission.camera.request();
 //  await Permission.storage.request();
   runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Number Trivia',
+      theme: ThemeData(
+        primaryColor: Colors.green.shade800,
+        accentColor: Colors.green.shade600,
+      ),
+      home: WebViewExample() /*DownloadAssetsDemo()*/,
+    );
+  }
 }
 
 Drawer myDrawer({@required BuildContext context}) {
@@ -56,7 +71,7 @@ Drawer myDrawer({@required BuildContext context}) {
   );
 }
 
-class MyApp extends StatefulWidget {
+/*class MyApp extends StatefulWidget {
   @override
   _MyAppState createState() => new _MyAppState();
 }
@@ -82,4 +97,4 @@ class _MyAppState extends State<MyApp> {
         }
     );
   }
-}
+}*/
