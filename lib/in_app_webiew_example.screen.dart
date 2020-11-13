@@ -252,6 +252,7 @@ class _InAppWebViewExampleScreenState extends State<InAppWebViewExampleScreen> {
 
     final String contentBase64 =
     base64Encode(const Utf8Encoder().convert(fileHtmlContents));
+
     final uri = Uri.directory(filePath);
     final uriString = uri.toString().substring(0, uri.toString().length - 1); /// Remove final slash symbol*/
 
