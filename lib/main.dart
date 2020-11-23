@@ -4,14 +4,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_test_app/features/presentation/pages/host_app_page.dart';
 import 'package:flutter_test_app/in_app_webiew_example.screen.dart';
+import 'package:flutter_test_app/camera_test.dart';
+
+import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter_test_app/features/presentation/di/injection_container.dart' as di;
 
 // import 'package:permission_handler/permission_handler.dart';
 
 InAppLocalhostServer localhostServer = new InAppLocalhostServer();
 
 Future main() async {
+  // it should be the first line in main method
   WidgetsFlutterBinding.ensureInitialized();
-  await localhostServer.start();
+  //await localhostServer.start();
+  await di.init();
+  await Permission.camera.request();
+  await Permission.microphone.request();
 //  await Permission.camera.request();
 //  await Permission.storage.request();
   runApp(MyApp());
@@ -21,12 +29,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Number Trivia',
+      title: 'Flutter Web View',
       theme: ThemeData(
         primaryColor: Colors.green.shade800,
         accentColor: Colors.green.shade600,
       ),
-      home: WebViewExample() /*DownloadAssetsDemo()*/,
+      home: WebViewExample(),
     );
   }
 }

@@ -46,6 +46,12 @@ dependencies:
   http: ^0.12.0+3
   # Package to create and extract .zip files
   archive: ^2.0.8
+  # Permission handler
+  permission_handler: ^5.0.1+1
+  # Camera dependency
+  camera: ^0.5.8+11
+  geolocator: ^6.1.7
+  image_picker: ^0.6.7+14
 
 dev_dependencies:
   flutter_test:

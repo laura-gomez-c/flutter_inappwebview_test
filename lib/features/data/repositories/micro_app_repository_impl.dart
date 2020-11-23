@@ -9,7 +9,6 @@ import '../../domain/repositories/micro_app_repository.dart';
 import '../datasources/micro_app_data_source.dart';
 
 class MicroAppRepositoryImpl implements MicroAppRepository {
-
   final MicroAppRemoteDataSource remoteDataSource;
 
   MicroAppRepositoryImpl({
@@ -30,7 +29,9 @@ class MicroAppRepositoryImpl implements MicroAppRepository {
     print('filePath:: $filePath');
 
     final uri = Uri.directory(filePath);
-    final uriString = uri.toString().substring(0, uri.toString().length - 1); /// Remove final slash symbol*/
+    final uriString = uri.toString().substring(0, uri.toString().length - 1);
+
+    /// Remove final slash symbol*/
 
     return Right(uriString);
   }
@@ -41,14 +42,20 @@ class MicroAppRepositoryImpl implements MicroAppRepository {
     var archive = ZipDecoder().decodeBytes(bytes);
     for (var file in archive) {
       var fileName = '$_dir/${file.name}';
+      print('filename: $fileName');
       if (file.isFile) {
         var outFile = File(fileName);
 
         print('File:: ' + outFile.path);
 
-        outFile = await outFile.create(recursive: true);
-        await outFile.writeAsBytes(file.content);
-        print('File written');
+        try {
+          outFile = await outFile.create(recursive: true);
+          outFile.writeAsBytes(file.content);
+          print('File written');
+        } on Exception catch (e) {
+          print(e);
+        }
+
       }
     }
   }

@@ -2,12 +2,16 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:archive/archive.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_test_app/features/presentation/bloc/bloc.dart';
+import 'package:flutter_test_app/features/presentation/di/injection_container.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:geolocator/geolocator.dart';
 
 class WebViewExample extends StatefulWidget {
   @override
@@ -16,7 +20,7 @@ class WebViewExample extends StatefulWidget {
 
 class _WebViewExampleState extends State<WebViewExample> {
   final Completer<InAppWebViewController> _controller =
-  Completer<InAppWebViewController>();
+      Completer<InAppWebViewController>();
   ContextMenu contextMenu;
   String url = "";
   double progress = 0;
@@ -53,8 +57,7 @@ class _WebViewExampleState extends State<WebViewExample> {
                 ),
                 android: AndroidInAppWebViewOptions(
                   allowFileAccessFromFileURLs: true,
-                )
-            ),
+                )),
             onWebViewCreated: (InAppWebViewController controller) {
               _controller.complete(controller);
               //_onNavigationDelegateExample('microapp4');
@@ -67,13 +70,20 @@ class _WebViewExampleState extends State<WebViewExample> {
                 this.url = url;
               });
             },
-            shouldOverrideUrlLoading: (controller, shouldOverrideUrlLoadingRequest) async {
+            shouldOverrideUrlLoading:
+                (controller, shouldOverrideUrlLoadingRequest) async {
               var url = shouldOverrideUrlLoadingRequest.url;
               var uri = Uri.parse(url);
 
-              if (!["http", "https", "file",
-                "chrome", "data", "javascript",
-                "about"].contains(uri.scheme)) {
+              if (![
+                "http",
+                "https",
+                "file",
+                "chrome",
+                "data",
+                "javascript",
+                "about"
+              ].contains(uri.scheme)) {
                 if (await canLaunch(url)) {
                   // Launch the App
                   await launch(
@@ -92,12 +102,14 @@ class _WebViewExampleState extends State<WebViewExample> {
                 this.url = url;
               });
             },
-            onProgressChanged: (InAppWebViewController controller, int progress) {
+            onProgressChanged:
+                (InAppWebViewController controller, int progress) {
               setState(() {
                 this.progress = progress / 100;
               });
             },
-            onUpdateVisitedHistory: (InAppWebViewController controller, String url, bool androidIsReload) {
+            onUpdateVisitedHistory: (InAppWebViewController controller,
+                String url, bool androidIsReload) {
               print("onUpdateVisitedHistory $url");
               setState(() {
                 this.url = url;
@@ -116,6 +128,7 @@ enum MenuOptions {
   navigationDelegateMicroApp2,
   navigationDelegateMicroApp3,
   navigationDelegateMicroApp4,
+  navigationDelegateMicroApp5,
 }
 
 class SampleMenu extends StatelessWidget {
@@ -135,52 +148,76 @@ class SampleMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<InAppWebViewController>(
-      future: controller,
-      builder:
-          (BuildContext context, AsyncSnapshot<InAppWebViewController> controller) {
-        return PopupMenuButton<MenuOptions>(
-          onSelected: (MenuOptions value) {
-            switch (value) {
-              case MenuOptions.navigationDelegateMicroApp1:
-                _onNavigationDelegateExample(
-                    controller.data, context, 'microapp1');
-                break;
-              case MenuOptions.navigationDelegateMicroApp2:
-                _onNavigationDelegateExample(
-                    controller.data, context, 'microapp2');
-                break;
-              case MenuOptions.navigationDelegateMicroApp3:
-                _onNavigationDelegateExample(
-                    controller.data, context, 'microapp3');
-                break;
-              case MenuOptions.navigationDelegateMicroApp4:
-                _onNavigationDelegateExample(
-                    controller.data, context, 'microapp4');
-                break;
-            }
-          },
-          itemBuilder: (BuildContext context) => <PopupMenuItem<MenuOptions>>[
-            PopupMenuItem<MenuOptions>(
-              value: MenuOptions.navigationDelegateMicroApp1,
-              child: Text('Download MicroApp 1'),
-            ),
-            const PopupMenuItem<MenuOptions>(
-              value: MenuOptions.navigationDelegateMicroApp2,
-              child: Text('Download MicroApp 2'),
-            ),
-            const PopupMenuItem<MenuOptions>(
-              value: MenuOptions.navigationDelegateMicroApp3,
-              child: Text('Download MicroApp 3'),
-            ),
-            const PopupMenuItem<MenuOptions>(
-              value: MenuOptions.navigationDelegateMicroApp4,
-              child: Text('Download MicroApp 4'),
-            ),
-          ],
-        );
-      },
+    return buildBody(context);
+  }
+
+  //region BlocProvider
+  BlocProvider<MicroAppBloc> buildBody(BuildContext context) {
+    return BlocProvider(
+      create: (_) => sl<MicroAppBloc>(),
+      child: FutureBuilder<InAppWebViewController>(
+        future: controller,
+        builder: (BuildContext context,
+            AsyncSnapshot<InAppWebViewController> controller) {
+          return PopupMenuButton<MenuOptions>(
+            onSelected: (MenuOptions value) {
+              switch (value) {
+                case MenuOptions.navigationDelegateMicroApp1:
+                  //_downloadMicroApp(context, 'microapp1');
+                  _onNavigationDelegateExample(
+                      controller.data, context, 'microapp1');
+                  break;
+                case MenuOptions.navigationDelegateMicroApp2:
+                  _onNavigationDelegateExample(
+                      controller.data, context, 'microapp2');
+                  break;
+                case MenuOptions.navigationDelegateMicroApp3:
+                  _onNavigationDelegateExample(
+                      controller.data, context, 'microapp3');
+                  break;
+                case MenuOptions.navigationDelegateMicroApp4:
+                  _onNavigationDelegateExample(
+                      controller.data, context, 'microapp4');
+                  break;
+                case MenuOptions.navigationDelegateMicroApp5:
+                  _onNavigationDelegateExample(
+                      controller.data, context, 'microapp5');
+                  break;
+              }
+            },
+            itemBuilder: (BuildContext context) => <PopupMenuItem<MenuOptions>>[
+              PopupMenuItem<MenuOptions>(
+                value: MenuOptions.navigationDelegateMicroApp1,
+                child: Text('Download MicroApp 1'),
+              ),
+              const PopupMenuItem<MenuOptions>(
+                value: MenuOptions.navigationDelegateMicroApp2,
+                child: Text('Download MicroApp 2'),
+              ),
+              const PopupMenuItem<MenuOptions>(
+                value: MenuOptions.navigationDelegateMicroApp3,
+                child: Text('Download MicroApp 3'),
+              ),
+              const PopupMenuItem<MenuOptions>(
+                value: MenuOptions.navigationDelegateMicroApp4,
+                child: Text('Download MicroApp 4'),
+              ),
+              const PopupMenuItem<MenuOptions>(
+                value: MenuOptions.navigationDelegateMicroApp5,
+                child: Text('Download MicroApp 5'),
+              ),
+            ],
+          );
+        },
+      ),
     );
+  }
+
+  //endregion
+
+  void _downloadMicroApp(BuildContext context, String microAppId) {
+    print('downloadMicroApp...');
+    BlocProvider.of<MicroAppBloc>(context).add(GetUrlForMicroApp(microAppId));
   }
 
   void _onNavigationDelegateExample(InAppWebViewController controller,
@@ -214,6 +251,7 @@ class SampleMenu extends StatelessWidget {
     var archive = ZipDecoder().decodeBytes(bytes);
     for (var file in archive) {
       var fileName = '$_dir/${file.name}';
+      print('filename: $fileName');
       if (file.isFile) {
         var outFile = File(fileName);
 
@@ -221,6 +259,7 @@ class SampleMenu extends StatelessWidget {
 
         outFile = await outFile.create(recursive: true);
         await outFile.writeAsBytes(file.content);
+        print('File written');
       }
     }
   }
@@ -236,11 +275,28 @@ class SampleMenu extends StatelessWidget {
     String fileHtmlContents = await file.readAsString();
 
     final String contentBase64 =
-    base64Encode(const Utf8Encoder().convert(fileHtmlContents));
+        base64Encode(const Utf8Encoder().convert(fileHtmlContents));
 
     final uri = Uri.directory(filePath);
-    final uriString = uri.toString().substring(0, uri.toString().length - 1); /// Remove final slash symbol
+    final uriString = uri.toString().substring(0, uri.toString().length - 1);
+
+    /// Remove final slash symbol
     controller.loadUrl(url: uriString);
+    controller.addJavaScriptHandler(
+        handlerName: 'postMessage',
+        callback: (args) {
+          print(args);
+          // it will print: [1, true, [bar, 5], {foo: baz}, {bar: bar_value, baz: baz_value}]
+        });
+
+    Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    print('position...' + position.toString());
+    controller.addJavaScriptHandler(
+        handlerName: 'getLocation',
+        callback: (args) {
+          // return data to JavaScript side!
+          return position.toJson();//{'latitud': position.latitude, 'longitud': position.longitude};
+        });
     // await controller.loadUrl('data:text/html;base64,$contentBase64');
   }
 }
@@ -255,8 +311,8 @@ class NavigationControls extends StatelessWidget {
   Widget build(BuildContext context) {
     return FutureBuilder<InAppWebViewController>(
       future: _webViewControllerFuture,
-      builder:
-          (BuildContext context, AsyncSnapshot<InAppWebViewController> snapshot) {
+      builder: (BuildContext context,
+          AsyncSnapshot<InAppWebViewController> snapshot) {
         final bool webViewReady =
             snapshot.connectionState == ConnectionState.done;
         final InAppWebViewController controller = snapshot.data;
@@ -267,41 +323,41 @@ class NavigationControls extends StatelessWidget {
               onPressed: !webViewReady
                   ? null
                   : () async {
-                if (await controller.canGoBack()) {
-                  await controller.goBack();
-                } else {
-                  // ignore: deprecated_member_use
-                  Scaffold.of(context).showSnackBar(
-                    const SnackBar(content: Text("No back history item")),
-                  );
-                  return;
-                }
-              },
+                      if (await controller.canGoBack()) {
+                        await controller.goBack();
+                      } else {
+                        // ignore: deprecated_member_use
+                        Scaffold.of(context).showSnackBar(
+                          const SnackBar(content: Text("No back history item")),
+                        );
+                        return;
+                      }
+                    },
             ),
             IconButton(
               icon: const Icon(Icons.arrow_forward_ios),
               onPressed: !webViewReady
                   ? null
                   : () async {
-                if (await controller.canGoForward()) {
-                  await controller.goForward();
-                } else {
-                  // ignore: deprecated_member_use
-                  Scaffold.of(context).showSnackBar(
-                    const SnackBar(
-                        content: Text("No forward history item")),
-                  );
-                  return;
-                }
-              },
+                      if (await controller.canGoForward()) {
+                        await controller.goForward();
+                      } else {
+                        // ignore: deprecated_member_use
+                        Scaffold.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text("No forward history item")),
+                        );
+                        return;
+                      }
+                    },
             ),
             IconButton(
               icon: const Icon(Icons.replay),
               onPressed: !webViewReady
                   ? null
                   : () {
-                controller.reload();
-              },
+                      controller.reload();
+                    },
             ),
           ],
         );
