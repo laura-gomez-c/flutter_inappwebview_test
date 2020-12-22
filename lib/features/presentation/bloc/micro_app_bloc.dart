@@ -45,7 +45,7 @@ class MicroAppBloc extends Bloc<MicroAppEvent, MicroAppState> {
     yield failureOrFile.fold(
       (failure) => Error(message: _mapFailureToMessage(failure)),
       (url) {
-        print('bloc.. url:: $url');
+        print('MICROAPP:: either loaded.. url:: $url');
         _readFile(url);
         return Loaded(url: url);
       },
@@ -70,6 +70,6 @@ class MicroAppBloc extends Bloc<MicroAppEvent, MicroAppState> {
     File file = File(path);
     String fileContent = await file.readAsString();
 
-    print('File Content: $fileContent');
+    print('MICROAPP:: File Content in bloc: $fileContent');
   }
 }

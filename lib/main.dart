@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_test_app/features/presentation/pages/host_app_page.dart';
+import 'package:flutter_test_app/features/presentation/pages/login_page.dart';
 import 'package:flutter_test_app/in_app_webiew_example.screen.dart';
 import 'package:flutter_test_app/camera_test.dart';
 
@@ -34,7 +35,7 @@ class MyApp extends StatelessWidget {
         primaryColor: Colors.green.shade800,
         accentColor: Colors.green.shade600,
       ),
-      home: WebViewExample(),
+      home: LoginPage()//WebViewExample(),
     );
   }
 }

@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 
@@ -25,9 +24,11 @@ class MicroAppRemoteDataSourceImpl implements MicroAppRemoteDataSource {
         'https://github.com/laura-gomez-c/assets_flutter_test/blob/main/$fileZipName.zip?raw=true'));
 
     print('status code response:: ' + response.statusCode.toString());
-    var file = File('$_dir/$fileZipName');
-
-    print('file path download::' + file.path);
-    return file.writeAsBytes(response.bodyBytes);
+    var file = File('$_dir/$fileZipName.zip');
+    try {
+      return file.writeAsBytes(response.bodyBytes);
+    } on Exception catch (e) {
+      print(e);
+    }
   }
 }

@@ -155,60 +155,63 @@ class SampleMenu extends StatelessWidget {
   BlocProvider<MicroAppBloc> buildBody(BuildContext context) {
     return BlocProvider(
       create: (_) => sl<MicroAppBloc>(),
-      child: FutureBuilder<InAppWebViewController>(
-        future: controller,
-        builder: (BuildContext context,
-            AsyncSnapshot<InAppWebViewController> controller) {
-          return PopupMenuButton<MenuOptions>(
-            onSelected: (MenuOptions value) {
-              switch (value) {
-                case MenuOptions.navigationDelegateMicroApp1:
-                  //_downloadMicroApp(context, 'microapp1');
-                  _onNavigationDelegateExample(
-                      controller.data, context, 'microapp1');
-                  break;
-                case MenuOptions.navigationDelegateMicroApp2:
-                  _onNavigationDelegateExample(
-                      controller.data, context, 'microapp2');
-                  break;
-                case MenuOptions.navigationDelegateMicroApp3:
-                  _onNavigationDelegateExample(
-                      controller.data, context, 'microapp3');
-                  break;
-                case MenuOptions.navigationDelegateMicroApp4:
-                  _onNavigationDelegateExample(
-                      controller.data, context, 'microapp4');
-                  break;
-                case MenuOptions.navigationDelegateMicroApp5:
-                  _onNavigationDelegateExample(
-                      controller.data, context, 'microapp5');
-                  break;
-              }
+      child: Column(
+        children: <Widget>[
+          FutureBuilder<InAppWebViewController>(
+            future: controller,
+            builder: (BuildContext context,
+                AsyncSnapshot<InAppWebViewController> controller) {
+              return PopupMenuButton<MenuOptions>(
+                onSelected: (MenuOptions value) {
+                  switch (value) {
+                    case MenuOptions.navigationDelegateMicroApp1:
+                      _downloadMicroApp(context, 'microapp1');
+                      //_onNavigationDelegateExample(controller.data, context, 'microapp1');
+                      break;
+                    case MenuOptions.navigationDelegateMicroApp2:
+                      _onNavigationDelegateExample(
+                          controller.data, context, 'microapp2');
+                      break;
+                    case MenuOptions.navigationDelegateMicroApp3:
+                      _onNavigationDelegateExample(
+                          controller.data, context, 'microapp3');
+                      break;
+                    case MenuOptions.navigationDelegateMicroApp4:
+                      _onNavigationDelegateExample(
+                          controller.data, context, 'microapp4');
+                      break;
+                    case MenuOptions.navigationDelegateMicroApp5:
+                      _onNavigationDelegateExample(
+                          controller.data, context, 'microapp5');
+                      break;
+                  }
+                },
+                itemBuilder: (BuildContext context) => <PopupMenuItem<MenuOptions>>[
+                  PopupMenuItem<MenuOptions>(
+                    value: MenuOptions.navigationDelegateMicroApp1,
+                    child: Text('Download MicroApp 1'),
+                  ),
+                  const PopupMenuItem<MenuOptions>(
+                    value: MenuOptions.navigationDelegateMicroApp2,
+                    child: Text('Download MicroApp 2'),
+                  ),
+                  const PopupMenuItem<MenuOptions>(
+                    value: MenuOptions.navigationDelegateMicroApp3,
+                    child: Text('Download MicroApp 3'),
+                  ),
+                  const PopupMenuItem<MenuOptions>(
+                    value: MenuOptions.navigationDelegateMicroApp4,
+                    child: Text('Download MicroApp 4'),
+                  ),
+                  const PopupMenuItem<MenuOptions>(
+                    value: MenuOptions.navigationDelegateMicroApp5,
+                    child: Text('Download MicroApp 5'),
+                  ),
+                ],
+              );
             },
-            itemBuilder: (BuildContext context) => <PopupMenuItem<MenuOptions>>[
-              PopupMenuItem<MenuOptions>(
-                value: MenuOptions.navigationDelegateMicroApp1,
-                child: Text('Download MicroApp 1'),
-              ),
-              const PopupMenuItem<MenuOptions>(
-                value: MenuOptions.navigationDelegateMicroApp2,
-                child: Text('Download MicroApp 2'),
-              ),
-              const PopupMenuItem<MenuOptions>(
-                value: MenuOptions.navigationDelegateMicroApp3,
-                child: Text('Download MicroApp 3'),
-              ),
-              const PopupMenuItem<MenuOptions>(
-                value: MenuOptions.navigationDelegateMicroApp4,
-                child: Text('Download MicroApp 4'),
-              ),
-              const PopupMenuItem<MenuOptions>(
-                value: MenuOptions.navigationDelegateMicroApp5,
-                child: Text('Download MicroApp 5'),
-              ),
-            ],
-          );
-        },
+          )
+        ],
       ),
     );
   }
@@ -216,7 +219,7 @@ class SampleMenu extends StatelessWidget {
   //endregion
 
   void _downloadMicroApp(BuildContext context, String microAppId) {
-    print('downloadMicroApp...');
+    print('MICROAPP:: downloadMicroApp...');
     BlocProvider.of<MicroAppBloc>(context).add(GetUrlForMicroApp(microAppId));
   }
 
@@ -289,13 +292,15 @@ class SampleMenu extends StatelessWidget {
           // it will print: [1, true, [bar, 5], {foo: baz}, {bar: bar_value, baz: baz_value}]
         });
 
-    Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
     print('position...' + position.toString());
     controller.addJavaScriptHandler(
         handlerName: 'getLocation',
         callback: (args) {
           // return data to JavaScript side!
-          return position.toJson();//{'latitud': position.latitude, 'longitud': position.longitude};
+          return position
+              .toJson(); //{'latitud': position.latitude, 'longitud': position.longitude};
         });
     // await controller.loadUrl('data:text/html;base64,$contentBase64');
   }

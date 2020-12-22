@@ -15,6 +15,7 @@ class GetMicroApp implements UseCase<String, Params> {
 
   @override
   Future<Either<Failure, String>> call(Params params) async {
+    print('MICROAPP:: usecase download: ' + params.microAppId);
     return await repository.getMicroAppUrl(params.microAppId);
   }
 }
